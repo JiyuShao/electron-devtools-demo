@@ -1,0 +1,32 @@
+<html>
+  <head>
+    <style type="text/css">
+      * {
+        margin: 0;
+      }
+
+      #simulator {
+        height: 100%;
+        width: 500px;
+      }
+    </style>
+  </head>
+  <body>
+    <webview id="simulator" src="https://github.com/JiyuShao"></webview>
+    <script>
+      const { ipcRenderer } = electronAPI;
+      const emittedOnce = (element, eventName) =>
+        new Promise((resolve) => {
+          element.addEventListener(eventName, (event) => resolve(event), {
+            once: true,
+          });
+        });
+      const simulatorView = document.getElementById("simulator");
+      const simulatorReady = emittedOnce(simulatorView, "dom-ready");
+      simulatorReady.then(() => {
+        const simulatorId = simulatorView.getWebContentsId();
+        ipcRenderer.send("open-devtools", simulatorId);
+      });
+    </script>
+  </body>
+</html>
